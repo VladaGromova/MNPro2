@@ -1,0 +1,123 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{geometry}
+\geometry{hdivide={2cm,*,2cm}}
+\geometry{vdivide={2cm,*,2cm}}
+\usepackage{titlesec}
+\titlespacing{\section}{0ex}{1ex}{1ex}
+\titleformat*{\section}{\sf\large\bfseries}
+\titlespacing{\subsection}{0ex}{0.75ex}{0.75ex}
+\titleformat*{\subsection}{\sf\bfseries}
+
+\AtBeginDocument{
+\addtolength{\abovedisplayskip}{-1ex}
+\addtolength{\abovedisplayshortskip}{-1ex}
+\addtolength{\belowdisplayskip}{-1ex}
+\addtolength{\belowdisplayshortskip}{-1ex}
+}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}m{#1}}
+\newcommand{\razy}{\hspace{-0.5ex}\times\hspace{-0.5ex}}
+
+
+\begin{document}
+
+\def\tablename{Tabela} 
+\noindent
+\textbf{Vlada Gromova, 323770, grupa 1, projekt 2, zadanie 11}
+
+
+\section*{Wstęp}
+Zadanie polegało na napisaniu funkcji obliczającej całkę oznaczoną na przedziale $[a,b]$ za pomocą 3-punktowej złożonej kwadratury Gaussa-Legendre'a. Najpierw wejsciowy przedział $[a,b]$ należalo podzielic na $m$ podprzedziałów, a następnie podwajać podział aż do momentu uzyskania wartości bezwzględnej różnicy kolejnych przybliżeń mniejszej od $\delta$, gdzie $\delta$ - parametr wejściowy funkcji oznaczony jako $tol$. Dodatkowo, w celu uniknięcia bardzo dużej liczby podprzedziałów, jako parametr wejściowy funkcji podana była maksymalna liczba podprzedziałów $m_{max}$.
+
+Z eksperymentów numerycznych wywnioskowano, że metoda obliczania całki oznaczonej za pomocą kwadratury Gaussa-Legendre'a działa nie gorzej (a czasem nawet lepiej), gdzy stosujemy ją na przedziale $[-1,1]$, czyli na ``wzorcowym'' przedziale dla tej kwadratury.
+
+\section*{Opis kwadratury Gaussa-Legendre'a}
+Z Metod Numerycznych 1 wiemy, że można przybliżyć wartość całki oznaczonej
+$$
+I(f) = \int_{a}^b f(x)dx
+$$
+za pomocą kwadratur postaci
+$$
+S(f) = \sum_{k=0}^{n} w_k f(x_k)
+$$
+gdzie $w_k$ to są wspłczynniki kwadratury, a $x_k$ - węzły kwadratury z przedziału $[a,b]$.
+
+Załóżmy teraz, że $[a,b] = [-1,1]$ i chcemy znaleźć 3-punktową kwadraturę o maksymalnym rzędzie $r$, czyli taką, która będzie dokładna dla wszystkich wielomianów stopnia mniejszego niż $r$ (także powinien istnieć wielomian stopnia $r$ dla którego kwadratura nie będzie dokładna). Szukaną kwadraturą jest kwadratura Gaussa-Legendre'a, węzłami której są pierwiastki wielomianu Legendre'a 3-go stopnia:
+$$
+p_3(x) = \frac{1}{2}(5x^3 - 3x)
+$$
+
+Współczynniki $w_i$ obliczają się ze wzoru:
+$$
+w_i = \frac{2}{(1-x_i^2)[p_3'(x_i)]^2}
+$$
+Rząd 3-punktowej kwadratury Gaussa-Legendre'a wynosi 6, a zatem kwadratura będzie dokładna dla wszystkich wielomianów stopnia 5 i niżej. 
+
+Załóżmy teraz, że chcemy zastosować kwadraturę opisaną wyżej na dowolnym przedziale $[a,b]$. Żeby to zrobić trzeba zmienić przedział całkowania stosując wzór wymieniony niżej:
+$$
+\int_{a}^b f(x)dx = \frac{b-a}{2}\sum_{k=0}^{2} w_k f(\frac{b-a}{2}x_k + \frac{a+b}{2})
+$$
+
+\section*{Eksperymenty numeryczne}
+Dla ekperymentów numerycznych zostały wybrane następujące podstawowe funkcje: $x^a$, $exp(x)$, $sin(x)$, $a^x$. Dla pewnych ekperymentów wymienione wyżej funkcje zdecydowano podnieść do potęgi.
+
+Kwadratura Gaussa-Legendre'a ``klasycznie'' stosuje się do obliczania całek na przedziale $[-1,1]$.  Podczas przeprowadzenia ekperymentów numerycznych zaobserwowano, że przesunięcie tego przedziału o 1 z zachowaniem długości może znacznie zwolnić proces obliczania, co zilustrowano w tabeli \ref{T1}. Za miarę szybkosći przyjęta liczba końcowych podprzedziałow.
+
+Zauważmy, że w przypadku funkcji trygonometrycznych i potęgowych sytuacja wygląda inaczej, co jest pokazane w tabeli \ref{T2}.
+\newpage
+
+\begin{table}[!h]\vspace*{-2ex}
+\caption{\footnotesize Dla każdego przykładu $ tol = 10^{-9}$, $m=10$, $m_{max} = 10^{6}$ 
+W pierwszej kolumnie są przedstawione funkcje wejściowe, w druiej i trzeciej - liczba iteracji niezbędna do osiągnięcia żądanej dokładności na przedziałach $[-1,1]$ oraz $[0,2]$ odpowiednio.} \vspace{-1.5ex}
+\label{T1}
+\begin{center}
+\begin{small}
+\begin{tabular}{|C{20ex}|C{20ex}|C{20ex}|}\hline
+   & $[-1,1]$ & $[0,2]$ \\\hline
+  $x^9$ & $20$ & $80$ \\\hline
+  $x^{24}$ & $160$ & $1280$ \\\hline
+  $x^{50}$ & $320$ & $655360$ \\\hline
+  $exp(x)$ & $20$ & $20$ \\\hline
+  $(exp(x))^{10}$ & $320$ & $655360$ \\\hline
+\end{tabular}
+\end{small}
+\end{center}
+\end{table}\vspace{-3ex}
+
+
+\begin{table}[!h]\vspace*{-2ex}
+\caption{\footnotesize Dla każdego przykładu $ tol = 10^{-9}$, $m=10$, $m_{max} = 10^{6}$ 
+W pierwszej kolumnie są przedstawione funkcje wejściowe, w druiej i trzeciej - liczba iteracji niezbędna do osiągnięcia żądanej dokładności na przedziałach $[-1,1]$ oraz $[0,2]$ odpowiednio.} \vspace{-1.5ex}
+\label{T2}
+\begin{center}
+\begin{small}
+\begin{tabular}{|C{20ex}|C{20ex}|C{20ex}|}\hline
+   & $[-1,1]$ & $[0,2]$ \\\hline
+  $(sin(x))^2$ & $20$ & $20$ \\\hline
+  $(sin(x))^9$ & $20$ & $40$ \\\hline
+  $(sin(x))^{20}$ & $40$ & $40$ \\\hline
+  $(cos(5x))^9$ & $80$ & $160$ \\\hline
+  $(cos(5x))^{20}$ & $80$ & $160$ \\\hline
+  $2^x$ & $20$ & $20$ \\\hline
+  $10^x$ & $40$ & $40$ \\\hline
+  $0.2^x$ & $20$ & $20$ \\\hline
+\end{tabular}
+\end{small}
+\end{center}
+\end{table}\vspace{-3ex}
+
+Podsumowując: 3-punktowa złożona kwadratura Gaussa-Legendre'a ma największy możliwy rząd, daje wystarczająco dokładny wynik przy małej liczbie iteracji. Wzór jest łatwy do implementacji i można go stosować na innym przedziale, niż $[-1,1]$, ale należy pamiętać, że nawet mała zmiana tego przedziału może znacznie zwolnić program.
+
+\end{document}
